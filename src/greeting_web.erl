@@ -27,10 +27,13 @@ loop(Req, DocRoot) ->
             Method when Method =:= 'GET'; Method =:= 'HEAD' ->
                 case Path of
                    "hello" ->
-                        QueryStringData = Req:parse_qs(),
-                        Username = proplists:get_value("username", QueryStringData, "Anonymous"),
-                        Req:respond({200, [{"Content-Type", "text/plain"}],
-                                           "Hello " ++ Username ++ "!\n"});
+                       QueryStringData = Req:parse_qs(),
+                       Username = proplists:get_value("username",
+                           QueryStringData, "Anonymous"),
+                       {ok, HTMLOutput} = greeting_dtl:render([{username,
+                                   Username}]),
+                       Req:respond({200, [{"Content-Type", "text/html"}],
+                                       HTMLOutput});
                     _ ->
                         Req:serve_file(Path, DocRoot)
                 end;
