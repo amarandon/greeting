@@ -26,6 +26,11 @@ loop(Req, DocRoot) ->
         case Req:get(method) of
             Method when Method =:= 'GET'; Method =:= 'HEAD' ->
                 case Path of
+                   "hello" ->
+                        QueryStringData = Req:parse_qs(),
+                        Username = proplists:get_value("username", QueryStringData, "Anonymous"),
+                        Req:respond({200, [{"Content-Type", "text/plain"}],
+                                           "Hello " ++ Username ++ "!\n"});
                     _ ->
                         Req:serve_file(Path, DocRoot)
                 end;
